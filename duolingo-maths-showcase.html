@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Duolingo Maths Showcase</title>
+  <style>
+    :root {
+      --green: #58cc02;
+      --green-dark: #46a302;
+      --bg: #f7f7f7;
+      --card: #ffffff;
+      --text: #3c3c3c;
+      --muted: #8a8a8a;
+      --orange: #ff8f00;
+      --border: #e5e5e5;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Nunito", "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #f2ffe7 0%, var(--bg) 45%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app {
+      width: min(980px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+      min-height: 620px;
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1, h2, h3, h4 { margin-top: 0; }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+
+    button:active { transform: translateY(1px); }
+
+    .primary {
+      background: var(--green);
+      color: white;
+      box-shadow: 0 4px 0 var(--green-dark);
+    }
+
+    .primary:hover { background: #62d90a; }
+
+    .concept-btn {
+      background: #f2f2f2;
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 0 #dddddd;
+    }
+
+    .concept-btn.selected {
+      background: #eaffe0;
+      border-color: #b6ec93;
+      box-shadow: 0 4px 0 #b6ec93;
+      color: #246600;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .ghost {
+      background: #efefef;
+      color: #4f4f4f;
+      box-shadow: 0 4px 0 #d8d8d8;
+    }
+
+    .story {
+      margin: 12px 0 20px;
+      background: #fff7dd;
+      border: 1px solid #ffe299;
+      border-radius: 14px;
+      padding: 14px;
+      line-height: 1.4;
+    }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .level {
+      padding: 16px;
+      border-radius: 14px;
+      text-align: center;
+      font-weight: 900;
+      border: 1px solid var(--border);
+      background: #f5f5f5;
+      color: #666;
+      box-shadow: 0 4px 0 #ddd;
+    }
+
+    .level.available {
+      background: var(--green);
+      color: #fff;
+      box-shadow: 0 4px 0 var(--green-dark);
+    }
+
+    .level.locked {
+      position: relative;
+      padding-top: 34px;
+      cursor: not-allowed;
+    }
+
+    .level.locked::before {
+      content: "🔒";
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .formula {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .scene {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .character {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      min-height: 210px;
+      background: #fafafa;
+    }
+
+    .character h4 {
+      margin: 0 0 8px;
+      text-align: center;
+    }
+
+    .basket {
+      min-height: 130px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      align-content: start;
+    }
+
+    .orange {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #ffc56f 0%, var(--orange) 65%, #d66f00 100%);
+      margin: 0 auto;
+      animation: pop .25s ease;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.2); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .result {
+      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 800;
+      padding: 8px;
+      border-radius: 12px;
+      background: #effee3;
+      border: 1px solid #c8efaa;
+    }
+
+    .top-note {
+      text-align: center;
+      color: #6f6f6f;
+      font-size: 0.92rem;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 760px) {
+      .scene { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="top-note">Single downloadable showcase file: all pages + animation in one HTML.</div>
+
+    <section id="concept" class="page active">
+      <h1>Duolingo Maths</h1>
+      <p class="subtitle">Choose a concept to start learning.</p>
+      <div class="button-grid">
+        <button class="concept-btn">Addition</button>
+        <button class="concept-btn">Subtraction</button>
+        <button class="concept-btn selected">Multiplication</button>
+        <button class="concept-btn">Division</button>
+      </div>
+      <div class="controls">
+        <button class="primary" data-go="definition">Start Multiplication</button>
+      </div>
+    </section>
+
+    <section id="definition" class="page">
+      <h2>Multiplication</h2>
+      <p class="subtitle">Definition</p>
+      <p class="story"><strong>Multiplication is representing repeated addition of equal groups.</strong></p>
+      <div class="controls">
+        <button class="ghost" data-go="concept">Back</button>
+        <button class="primary" data-go="levels">See Levels</button>
+      </div>
+    </section>
+
+    <section id="levels" class="page">
+      <h2>Multiplication Levels</h2>
+      <p class="subtitle">Only Level 1 is available right now.</p>
+      <div class="level-grid">
+        <button class="level available" data-go="lesson">Level 1</button>
+        <button class="level locked" disabled>Level 2</button>
+        <button class="level locked" disabled>Level 3</button>
+        <button class="level locked" disabled>Level 4</button>
+      </div>
+      <div class="controls">
+        <button class="ghost" data-go="definition">Back</button>
+      </div>
+    </section>
+
+    <section id="lesson" class="page">
+      <h2>Level 1 Lesson: 4 oranges × 3 vendors = 12</h2>
+      <p class="story">
+        Juan needs 12 oranges so he goes to the market. He is friends with 3 orange vendors,
+        and decides to get <strong>4 oranges</strong> from each friend.
+      </p>
+
+      <div class="formula">4 oranges × 3 vendors = 12</div>
+
+      <div class="scene">
+        <div class="character">
+          <h4>Vendor 1</h4>
+          <div class="basket" id="vendor-1"></div>
+        </div>
+        <div class="character">
+          <h4>Vendor 2</h4>
+          <div class="basket" id="vendor-2"></div>
+        </div>
+        <div class="character">
+          <h4>Vendor 3</h4>
+          <div class="basket" id="vendor-3"></div>
+        </div>
+        <div class="character">
+          <h4>Juan</h4>
+          <div class="basket" id="juan"></div>
+        </div>
+      </div>
+
+      <div class="result" id="result">Press “Play Animation” to watch Juan collect oranges.</div>
+
+      <div class="controls">
+        <button class="ghost" data-go="levels">Back to Levels</button>
+        <button id="play-animation" class="primary">Play Animation</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const pages = [...document.querySelectorAll('.page')];
+
+    function showPage(pageId) {
+      pages.forEach((page) => page.classList.remove('active'));
+      const target = document.getElementById(pageId) || document.getElementById('concept');
+      target.classList.add('active');
+      location.hash = pageId;
+    }
+
+    document.querySelectorAll('[data-go]').forEach((button) => {
+      button.addEventListener('click', () => {
+        showPage(button.getAttribute('data-go'));
+      });
+    });
+
+    window.addEventListener('load', () => {
+      const pageFromHash = location.hash.replace('#', '');
+      if (pageFromHash) {
+        showPage(pageFromHash);
+      }
+    });
+
+    const vendorBaskets = [
+      document.getElementById('vendor-1'),
+      document.getElementById('vendor-2'),
+      document.getElementById('vendor-3')
+    ];
+    const juanBasket = document.getElementById('juan');
+    const result = document.getElementById('result');
+    const playButton = document.getElementById('play-animation');
+
+    function addOrange(target) {
+      const orange = document.createElement('div');
+      orange.className = 'orange';
+      target.appendChild(orange);
+    }
+
+    function resetLesson() {
+      vendorBaskets.forEach((basket) => {
+        basket.innerHTML = '';
+      });
+      juanBasket.innerHTML = '';
+      result.textContent = 'Press “Play Animation” to watch Juan collect oranges.';
+    }
+
+    playButton.addEventListener('click', () => {
+      resetLesson();
+
+      const steps = [];
+      for (let vendor = 0; vendor < 3; vendor += 1) {
+        for (let orange = 0; orange < 4; orange += 1) {
+          steps.push(() => addOrange(vendorBaskets[vendor]));
+          steps.push(() => addOrange(juanBasket));
+        }
+      }
+
+      let index = 0;
+      const timer = setInterval(() => {
+        if (index >= steps.length) {
+          clearInterval(timer);
+          result.textContent = 'Juan collected 12 oranges! 4 oranges × 3 vendors = 12';
+          return;
+        }
+
+        steps[index]();
+        index += 1;
+      }, 280);
+    });
+  </script>
+</body>
+</html>
